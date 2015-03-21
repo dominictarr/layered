@@ -1,0 +1,20 @@
+{
+  "name": "layered",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dominictarr/layered",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dominictarr/layered.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "prepublish": "npm ls &&  npm test",
+    "test": "set -e; for t in test/*.js; do node $t; done"
+  },
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
+  "license": "MIT"  
+}
