@@ -8,13 +8,16 @@
     "url": "git://github.com/dominictarr/layered.git"
   },
   "dependencies": {
+    "cont": "~1.0.3",
+    "semver": "~4.3.1"
   },
   "devDependencies": {
+    "tape": "~3.5.0"
   },
   "scripts": {
     "prepublish": "npm ls &&  npm test",
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
-  "license": "MIT"  
+  "license": "MIT"
 }
