@@ -102,6 +102,12 @@ module.exports = function () {
         })
 
       //initialize the api... but what about the api's permissions?
+
+      if(layer.init) {
+        var API = this.api()
+        layer.api = layer.init.call(API, API)
+      }
+
       layers.push(layer)
 
       return this
