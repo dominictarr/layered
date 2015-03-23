@@ -1,4 +1,4 @@
-var u = require('./util')
+var u = require('../util')
 
 var isArray = Array.isArray
 
@@ -14,7 +14,7 @@ function toArray(str) {
   return isArray(str) ? str : str.split('.')
 }
 
-module.exports = function () {
+module.exports = function (defaults) {
   var whitelist = null
   var blacklist = {}
 
@@ -52,6 +52,8 @@ module.exports = function () {
   perms.test = function (name, args) {
     return perms.pre(name, args)
   }
+
+  if(defaults) perms(defaults)
 
   return perms
 }
