@@ -1,10 +1,14 @@
 
 var tape = require('tape')
+var cont = require('cont')
 
 var Layered = require('../')
 
-var layered = Layered()
-var cont = require('cont')
+var config = {
+  foo: true, bar: 1, baz: 'hello'
+}
+
+var layered = Layered(config)
 
 layered.use({
   name: 'foo',
@@ -93,7 +97,7 @@ tape('permissions', function (t) {
 
 tape('nested', function (t) {
 
-  t.plan(23)
+  t.plan(24)
 
   var pre = 0, post = 2
 
@@ -106,7 +110,8 @@ tape('nested', function (t) {
       bar: '~0.0.0'
     },
     core: false,
-    init: function (api) {
+    init: function (api, _config) {
+      t.deepEqual(_config, config)
       return {
         foobar: cont(function (val, cb) {
           this.bar(val, cb)
