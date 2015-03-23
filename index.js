@@ -1,4 +1,5 @@
 var semver = require('semver')
+var EventEmitter = require('events').EventEmitter
 
 function isFunction (f) {
   return 'function' === typeof f
@@ -26,8 +27,8 @@ function copy (_a, a) {
   return _a
 }
 
-function merge(ary) {
-  return ary.reduce(copy, {})
+function merge(ary, initial) {
+  return ary.reduce(copy, initial || {})
 }
 
 function _pluck(name) {
@@ -48,8 +49,9 @@ function allow () {
   return perms
 }
 
-module.exports = function () {
+module.exports = function (config) {
 
+  var layered
   var layers = []
 
   function resolve(name, range) {
@@ -58,10 +60,11 @@ module.exports = function () {
     })
   }
 
-  return {
+  return layered = {
+    config: config,
     api: function (perms) {
       //return a flatterned api snapshot.
-      var root = {}
+      var root = new EventEmitter()
 
       perms = perms || allow()
 
@@ -77,10 +80,10 @@ module.exports = function () {
         each(layer.manifest, function (type, name) {
           var _path = path.concat(name)
           api[name] = function (arg, cb) {
-            perms.pre(arg, _path, type) //should throw if invalid.
+            perms.pre(arg, _path, type, config) //should throw if invalid.
 
             var value = layer.api[name].call(root, arg)
-            value = perms.post(value, _path, type)
+            value = perms.post(value, _path, type, config)
             if(cb && type === 'async') value(cb)
             else                       return value
           }
@@ -104,8 +107,8 @@ module.exports = function () {
       //initialize the api... but what about the api's permissions?
 
       if(layer.init) {
-        var API = this.api()
-        layer.api = layer.init.call(API, API)
+        var API = layered.api()
+        layer.api = layer.init.call(API, API, config)
       }
 
       layers.push(layer)
@@ -114,7 +117,6 @@ module.exports = function () {
     },
 
     manifest: function () {
-      console.log(layers.map(_pluck('manifest')))
       return merge(layers.map(function (layer) {
         if(layer.core) return layer.manifest
         var o = {}
